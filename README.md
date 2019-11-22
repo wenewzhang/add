@@ -27,3 +27,8 @@ or
 
 cargo new adder --bin
 ```
+
+run search test
+```
+cargo test -p search
+```
