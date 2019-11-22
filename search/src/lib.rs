@@ -1,3 +1,7 @@
+use std::env;
+use std::fs;
+use std::io;
+use std::error::Error;
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -16,8 +20,25 @@ Pick three.";
         );
     }
 }
+pub struct Config {
+    query: String,
+    filename: String,
+}
 
+fn parse_config(args: &[String]) -> Config {
+    let query = args[1].clone();
+    let filename = args[2].clone();
 
+    Config { query, filename }
+}
+impl Config {
+    fn new(args: &[String]) -> Config {
+        let query = args[1].clone();
+        let filename = args[2].clone();
+
+        Config { query, filename }
+    }
+}
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
 
@@ -28,4 +49,14 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     }
 
     results
+}
+
+pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(config.filename)?;
+
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+    }
+
+    Ok(())
 }
